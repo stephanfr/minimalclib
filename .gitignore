@@ -1,0 +1,11 @@
+# Build outputs
+build/
+lib/
+
+# Test outputs
+test/build/
+test/coverage/
+
+# OS / editor files
+.DS_Store
+*.log
