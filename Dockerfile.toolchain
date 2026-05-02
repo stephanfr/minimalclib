@@ -1,0 +1,50 @@
+# Base image for building and testing minimalclib (and sibling libraries).
+# Provides:
+#   - aarch64-none-elf bare-metal cross-compiler (ARM GNU Toolchain 13.3.rel1)
+#   - Native gcc/g++ for host tests
+#   - CppUTest 4.0 via apt
+#   - make, git, curl
+#
+# Published to: ghcr.io/stephanfr/aarch64-bare-metal-toolchain:13.3.rel1
+#
+# Toolchain is installed under /opt/arm-gnu-toolchain so that
+# TOOLS=/opt satisfies the makefiles.
+
+FROM ubuntu:24.04
+
+ARG DEBIAN_FRONTEND=noninteractive
+ARG TOOLCHAIN_VERSION=13.3.rel1
+ARG TOOLCHAIN_ARCH=x86_64
+ARG TOOLCHAIN_TARGET=aarch64-none-elf
+ARG TOOLCHAIN_TARBALL=arm-gnu-toolchain-${TOOLCHAIN_VERSION}-${TOOLCHAIN_ARCH}-${TOOLCHAIN_TARGET}.tar.xz
+ARG TOOLCHAIN_URL=https://developer.arm.com/-/media/Files/downloads/gnu/${TOOLCHAIN_VERSION}/binrel/${TOOLCHAIN_TARBALL}
+ARG TOOLCHAIN_INSTALL_DIR=/opt
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        gcc \
+        g++ \
+        make \
+        git \
+        curl \
+        xz-utils \
+        ca-certificates \
+        cmake \
+    && rm -rf /var/lib/apt/lists/*
+
+# Build CppUTest 4.0 from source and install to /opt/cpputest
+RUN git clone --depth 1 --branch v4.0 https://github.com/cpputest/cpputest.git /tmp/cpputest \
+    && cmake -S /tmp/cpputest -B /tmp/cpputest/build \
+        -DCMAKE_INSTALL_PREFIX=/opt/cpputest \
+        -DC_CXX_FLAGS="-DCPPUTEST_USE_STD_CPP_LIB=0 -DCPPUTEST_USE_STD_C_LIB=0" \
+    && cmake --build /tmp/cpputest/build --parallel \
+    && cmake --install /tmp/cpputest/build \
+    && rm -rf /tmp/cpputest
+
+RUN curl -fsSL "${TOOLCHAIN_URL}" -o /tmp/${TOOLCHAIN_TARBALL} \
+    && tar -xf /tmp/${TOOLCHAIN_TARBALL} -C ${TOOLCHAIN_INSTALL_DIR} \
+    && rm /tmp/${TOOLCHAIN_TARBALL}
+
+ENV TOOLS=/opt
+ENV THIRD_PARTY=/opt
+ENV CPPUTEST_PATH=/opt/cpputest
+ENV PATH="${TOOLCHAIN_INSTALL_DIR}/arm-gnu-toolchain-${TOOLCHAIN_VERSION}-${TOOLCHAIN_ARCH}-${TOOLCHAIN_TARGET}/bin:${PATH}"
