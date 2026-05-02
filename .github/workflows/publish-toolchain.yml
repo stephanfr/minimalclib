@@ -1,0 +1,37 @@
+name: Publish toolchain base image
+
+on:
+  push:
+    branches: [main]
+    paths: [Dockerfile.toolchain]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: stephanfr/aarch64-bare-metal-toolchain
+  IMAGE_TAG: 13.3.rel1
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push toolchain image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile.toolchain
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}

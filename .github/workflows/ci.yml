@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/stephanfr/aarch64-bare-metal-toolchain:13.3.rel1
+
+    env:
+      TOOLS: /opt
+      THIRD_PARTY: /opt
+      CPPUTEST_PATH: /opt/cpputest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build aarch64 library
+        run: make lib
+
+      - name: Build and run native tests
+        run: make test

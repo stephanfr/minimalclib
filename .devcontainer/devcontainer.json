@@ -1,0 +1,17 @@
+{
+    "name": "minimalclib",
+    "image": "ghcr.io/stephanfr/aarch64-bare-metal-toolchain:13.3.rel1",
+    "remoteEnv": {
+        "TOOLS": "/opt",
+        "THIRD_PARTY": "/opt",
+        "CPPUTEST_PATH": "/opt/cpputest"
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-vscode.cpptools",
+                "ms-vscode.makefile-tools"
+            ]
+        }
+    }
+}
