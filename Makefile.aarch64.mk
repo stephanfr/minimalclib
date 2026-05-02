@@ -2,7 +2,7 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-include ../Makefile.aarch64.mk
+include Makefile.toolchain.aarch64.mk
 
 ASM_SRC_DIR := src/asm
 C_SRC_DIR := src/c

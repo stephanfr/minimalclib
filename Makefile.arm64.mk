@@ -2,7 +2,7 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-include ../Makefile.arm64.mk
+include Makefile.toolchain.arm64.mk
 
 C_SRC_DIR := src/c
 OBJ_DIR := build/arm64
