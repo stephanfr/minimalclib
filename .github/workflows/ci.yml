@@ -11,7 +11,26 @@ env:
   IMAGE: ghcr.io/stephanfr/aarch64-bare-metal-toolchain:13.3.rel1
 
 jobs:
+  check-dockerfile:
+    runs-on: ubuntu-latest
+    outputs:
+      dockerfile_changed: ${{ steps.filter.outputs.dockerfile }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check if Dockerfile.toolchain changed
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            dockerfile:
+              - 'Dockerfile.toolchain'
+
   publish-image:
+    needs: check-dockerfile
+    if: needs.check-dockerfile.outputs.dockerfile_changed == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -40,7 +59,8 @@ jobs:
           cache-to: type=registry,ref=ghcr.io/stephanfr/aarch64-bare-metal-toolchain:buildcache,mode=max
 
   build-and-test:
-    needs: publish-image
+    needs: [check-dockerfile, publish-image]
+    if: always() && !failure() && !cancelled()
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/stephanfr/aarch64-bare-metal-toolchain:13.3.rel1
