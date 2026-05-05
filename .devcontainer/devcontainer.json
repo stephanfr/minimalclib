@@ -1,6 +1,9 @@
 {
     "name": "minimalclib",
-    "image": "ghcr.io/stephanfr/aarch64-bare-metal-toolchain:13.3.rel1",
+    "build": {
+        "dockerfile": "../Dockerfile.toolchain",
+        "context": ".."
+    },
     "remoteEnv": {
         "TOOLS": "/opt",
         "THIRD_PARTY": "/opt",

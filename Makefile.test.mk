@@ -26,10 +26,9 @@ TEST_LIB := -L$(CPPUTEST_PATH)/lib -lCppUTest -lCppUTestExt
 test : clean_test $(TEST_EXE)
 
 test-coverage : clean_test $(COVERAGE_EXE)
-	cd $(COVERAGE_OBJ_DIR)
-	gcov *.gcno --object-directory .
-	lcov --capture --directory . --output-file $(COVERAGE_OBJ_DIR)/test_coverage.info
-	lcov --remove $(COVERAGE_OBJ_DIR)/test_coverage.info '/usr/include/*' '$(CPPUTEST_PATH)/*' --output-file $(COVERAGE_OBJ_DIR)/test_coverage_filtered.info
+	cd $(COVERAGE_OBJ_DIR) && gcov *.gcno --object-directory .
+	lcov --capture --directory $(COVERAGE_OBJ_DIR) --output-file $(COVERAGE_OBJ_DIR)/test_coverage.info --ignore-errors mismatch --rc branch_coverage=1
+	lcov --remove $(COVERAGE_OBJ_DIR)/test_coverage.info '/usr/include/*' '$(CPPUTEST_PATH)/*' --output-file $(COVERAGE_OBJ_DIR)/test_coverage_filtered.info --ignore-errors unused --rc branch_coverage=1
 	genhtml $(COVERAGE_OBJ_DIR)/test_coverage_filtered.info --output-directory $(COVERAGE_OBJ_DIR)/coverage_report
 
 $(TEST_EXE) : $(TEST_OBJ)

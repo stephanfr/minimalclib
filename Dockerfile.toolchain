@@ -2,7 +2,8 @@
 # Provides:
 #   - aarch64-none-elf bare-metal cross-compiler (ARM GNU Toolchain 13.3.rel1)
 #   - Native gcc/g++ for host tests
-#   - CppUTest 4.0 via apt
+#   - CppUTest 4.0 from source
+#   - Coverage tooling (gcovr, lcov)
 #   - make, git, curl
 #
 # Published to: ghcr.io/stephanfr/aarch64-bare-metal-toolchain:13.3.rel1
@@ -26,6 +27,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         make \
         git \
         curl \
+        gcovr \
+        lcov \
         xz-utils \
         ca-certificates \
         cmake \
