@@ -20,10 +20,6 @@ void __assert (const char *msg, const char *file, int line);
 char* itoa( int value, char *str, int base );
 char* utoa( unsigned int value, char *str, int base );
 
-//  This custom 4-parameter variant of strtol is always available via libminimalclib.
-//  Its signature is distinct from the standard 3-parameter strtol and does not conflict.
-long strtol(const char *numeric_string, char **first_nonconverted_character, int base, int *result_code);
-
 /*
 #define min(a,b) \
    ({ __typeof__ (a) _a = (a); \
